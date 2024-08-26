@@ -1,6 +1,8 @@
 import socket
-import argparse
+import tkinter as tk
+from tkinter import ttk, messagebox
 
+# Expanded list of well-known ports and their services
 WELL_KNOWN_PORTS = {
     20: 'FTP Data Transfer',
     21: 'FTP Control',
@@ -8,11 +10,33 @@ WELL_KNOWN_PORTS = {
     23: 'Telnet',
     25: 'SMTP',
     53: 'DNS',
+    69: 'TFTP',
     80: 'HTTP',
     110: 'POP3',
+    123: 'NTP',
+    135: 'MS RPC',
     143: 'IMAP',
-    443: 'HTTPS'
-
+    161: 'SNMP',
+    194: 'IRC',
+    443: 'HTTPS',
+    465: 'SMTPS',
+    587: 'SMTP TLS',
+    993: 'IMAPS',
+    995: 'POP3S',
+    1080: 'SOCKS Proxy',
+    1194: 'OpenVPN',
+    1433: 'MS SQL Server',
+    1723: 'PPTP',
+    3306: 'MySQL',
+    3389: 'RDP',
+    5432: 'PostgreSQL',
+    5900: 'VNC',
+    6379: 'Redis',
+    8080: 'HTTP Proxy',
+    8443: 'HTTPS Alt',
+    9000: 'SonarQube',
+    9200: 'Elasticsearch',
+    27017: 'MongoDB',
 }
 
 def scan_ports(host, start_port, end_port):
@@ -26,30 +50,70 @@ def scan_ports(host, start_port, end_port):
     return open_ports
 
 def print_service_info(port):
-    service = WELL_KNOWN_PORTS.get(port, 'Unknown Service')
-    print(f'Port {port}: {service}')
+    return WELL_KNOWN_PORTS.get(port, 'Unknown Service')
 
-def main():
-    parser = argparse.ArgumentParser(description='Port Scanner')
-    parser.add_argument('host', type=str, help='Host to scan')
-    parser.add_argument('start_port', type=int, help='Start port number')
-    parser.add_argument('end_port', type=int, help='End port number')
+def start_scan():
+    host = host_entry.get()
+    try:
+        start_port = int(start_port_entry.get())
+        end_port = int(end_port_entry.get())
+    except ValueError:
+        messagebox.showerror("Input Error", "Please enter valid port numbers.")
+        return
 
-    args = parser.parse_args()
-    host = args.host
-    start_port = args.start_port
-    end_port = args.end_port
-
-    print(f'Scanning host {host} from port {start_port} to port {end_port}...')
+    result_text.delete(1.0, tk.END)  # Clear previous results
+    result_text.insert(tk.END, f'Scanning host {host} from port {start_port} to port {end_port}...\n')
 
     open_ports = scan_ports(host, start_port, end_port)
 
     if open_ports:
-        print('Open ports:')
+        result_text.insert(tk.END, 'Open ports:\n')
         for port in open_ports:
-            print_service_info(port)
+            service = print_service_info(port)
+            result_text.insert(tk.END, f'Port {port}: {service}\n')
     else:
-        print('No open ports found.')
+        result_text.insert(tk.END, 'No open ports found.\n')
 
-if __name__ == '__main__':
-    main()
+# GUI setup
+root = tk.Tk()
+root.title("Advanced Port Scanner")
+root.geometry('600x400')
+root.configure(bg='#2c3e50')
+
+style = ttk.Style()
+style.configure("TFrame", background="#34495e")
+style.configure("TLabel", background="#34495e", foreground="#ecf0f1", font=('Arial', 10))
+style.configure("TButton", background="#16a085", foreground="#ecf0f1", font=('Arial', 10, 'bold'))
+style.configure("TEntry", font=('Arial', 10))
+
+frame = ttk.Frame(root, padding="20")
+frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
+# Host
+ttk.Label(frame, text="Host:").grid(column=0, row=0, sticky=tk.W, pady=5)
+host_entry = ttk.Entry(frame, width=25)
+host_entry.grid(column=1, row=0, sticky=(tk.W, tk.E))
+
+# Start Port
+ttk.Label(frame, text="Start Port:").grid(column=0, row=1, sticky=tk.W, pady=5)
+start_port_entry = ttk.Entry(frame, width=10)
+start_port_entry.grid(column=1, row=1, sticky=(tk.W, tk.E))
+
+# End Port
+ttk.Label(frame, text="End Port:").grid(column=0, row=2, sticky=tk.W, pady=5)
+end_port_entry = ttk.Entry(frame, width=10)
+end_port_entry.grid(column=1, row=2, sticky=(tk.W, tk.E))
+
+# Scan Button
+scan_button = ttk.Button(frame, text="Start Scan", command=start_scan)
+scan_button.grid(column=0, row=3, columnspan=2, pady=10)
+
+# Result Text
+result_text = tk.Text(frame, width=70, height=15, bg="#ecf0f1", fg="#2c3e50", font=('Arial', 10))
+result_text.grid(column=0, row=4, columnspan=2, pady=10)
+
+# Add padding to all widgets
+for child in frame.winfo_children(): 
+    child.grid_configure(padx=5, pady=5)
+
+root.mainloop()
