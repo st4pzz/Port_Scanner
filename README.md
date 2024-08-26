@@ -83,11 +83,7 @@ Se você deseja contribuir para o projeto, siga estas etapas:
 
 Este projeto é distribuído sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
-## Contato
 
-Para qualquer dúvida ou sugestão, sinta-se à vontade para entrar em contato:
-- **Email**: seu.email@example.com
-- **GitHub**: [seu-usuario](https://github.com/seu-usuario)
 
 ---
 
