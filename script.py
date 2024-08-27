@@ -2,8 +2,7 @@ import socket
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-# Expanded list of well-known ports and their services
-WELL_KNOWN_PORTS = {
+PORTAS = {
     20: 'FTP Data Transfer',
     21: 'FTP Control',
     22: 'SSH',
@@ -50,7 +49,7 @@ def scan_ports(host, start_port, end_port):
     return open_ports
 
 def print_service_info(port):
-    return WELL_KNOWN_PORTS.get(port, 'Unknown Service')
+    return PORTAS.get(port, 'Serviço Desconhecido!!!')
 
 def start_scan():
     host = host_entry.get()
@@ -58,25 +57,25 @@ def start_scan():
         start_port = int(start_port_entry.get())
         end_port = int(end_port_entry.get())
     except ValueError:
-        messagebox.showerror("Input Error", "Please enter valid port numbers.")
+        messagebox.showerror("Input Error", "Por favor, digite um numero de porta valido.")
         return
 
-    result_text.delete(1.0, tk.END)  # Clear previous results
-    result_text.insert(tk.END, f'Scanning host {host} from port {start_port} to port {end_port}...\n')
+    result_text.delete(1.0, tk.END) 
+    result_text.insert(tk.END, f'Escaneando host {host} da porta {start_port} ate a porta {end_port}...\n')
 
     open_ports = scan_ports(host, start_port, end_port)
 
     if open_ports:
-        result_text.insert(tk.END, 'Open ports:\n')
+        result_text.insert(tk.END, 'Portas abertas:\n')
         for port in open_ports:
             service = print_service_info(port)
-            result_text.insert(tk.END, f'Port {port}: {service}\n')
+            result_text.insert(tk.END, f'Porta: {service}\n')
     else:
-        result_text.insert(tk.END, 'No open ports found.\n')
+        result_text.insert(tk.END, 'Nenhuma porta encontrada.\n')
 
-# GUI setup
+
 root = tk.Tk()
-root.title("Advanced Port Scanner")
+root.title("Port Scanner")
 root.geometry('600x400')
 root.configure(bg='#2c3e50')
 
@@ -89,30 +88,29 @@ style.configure("TEntry", font=('Arial', 10))
 frame = ttk.Frame(root, padding="20")
 frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
-# Host
+
 ttk.Label(frame, text="Host:").grid(column=0, row=0, sticky=tk.W, pady=5)
 host_entry = ttk.Entry(frame, width=25)
 host_entry.grid(column=1, row=0, sticky=(tk.W, tk.E))
 
-# Start Port
+
 ttk.Label(frame, text="Start Port:").grid(column=0, row=1, sticky=tk.W, pady=5)
 start_port_entry = ttk.Entry(frame, width=10)
 start_port_entry.grid(column=1, row=1, sticky=(tk.W, tk.E))
 
-# End Port
+
 ttk.Label(frame, text="End Port:").grid(column=0, row=2, sticky=tk.W, pady=5)
 end_port_entry = ttk.Entry(frame, width=10)
 end_port_entry.grid(column=1, row=2, sticky=(tk.W, tk.E))
 
-# Scan Button
+
 scan_button = ttk.Button(frame, text="Start Scan", command=start_scan)
 scan_button.grid(column=0, row=3, columnspan=2, pady=10)
 
-# Result Text
+
 result_text = tk.Text(frame, width=70, height=15, bg="#ecf0f1", fg="#2c3e50", font=('Arial', 10))
 result_text.grid(column=0, row=4, columnspan=2, pady=10)
 
-# Add padding to all widgets
 for child in frame.winfo_children(): 
     child.grid_configure(padx=5, pady=5)
 
